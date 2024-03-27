@@ -1,0 +1,33 @@
+global:
+  exec:
+    accelerate launch --num_processes NUM_PROC --main_process_port PORT --config_file
+    ./accelerator_config.yaml main.py
+  params:
+    batch_size: 512
+    cutmix: 1.0
+    data_path: /mnt/storage/qingyuan/dataset/imagenet
+    data_set: IMNET
+    dataloader: multiepoch
+    epochs: 50
+    eval_interval: 0
+    force_refresh: false
+    gpuaug: true
+    job_index: "-"
+    lr: 0.000625
+    mixup: 0.8
+    model_ema: true
+    num_attn_layer: 2
+    num_workers: 30
+    output_dir: ./training/
+    prefetch_factor: 2
+    record_dir: ./records/
+    update_freq: 1
+    use_amp: true
+    warmup_epochs: 5
+    weight_decay: 0.05
+tasks:
+  - params:
+      batch_size: 1024
+      epoch: 50
+      model: convnextv2_atto
+      sim_index: dyce_convnextv2_atto
