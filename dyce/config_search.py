@@ -231,14 +231,14 @@ class ConfigEvalAccelerated(ConfigEval):
                 self.update_config(pos, exit_typei, t, save_change=True)
             return self._eval_current(calibration=calibration, return_exit_at_pos=return_exit_at_pos)
 
-    def config_search_samethres(self, threshold, **kwargs):
+    def config_search_samethres(self, lam:float, **kwargs):
         '''
         Yield a configuration with the same threshold for all exits.
-        threshold - float, threshold for all exits.
+        lam - float, threshold for all exits.
         kwargs['exit_typei'] - int, the type index of the exit. Default: 0
         '''
         exit_typei = kwargs.pop('exit_typei', 0)
-        return [(exit_typei, threshold) for _ in range(len(self.exit_cons) - 1)]
+        return [(exit_typei, lam) for _ in range(len(self.exit_cons) - 1)]
 
     def config_search_circular(self, lam:float, max_rounds:int=1000, verbose:bool=False, calibration:bool=False, normalize:bool=False):
         '''
@@ -488,6 +488,10 @@ def load_records(record_path: str, macs_info: dict):
     else:
         meta_info = None
     bb_macs = macs_info['backbone']['macs']
+    if 'shared' in macs_info:
+        assert len(macs_info['backbone']['macs']) == len(macs_info['shared']['macs'])
+        for i in range(len(macs_info['backbone']['macs'])):
+            bb_macs[i]+= macs_info['shared']['macs'][i]
     exit_macs = []
     len_type = len(macs_info['head'])
     len_pos = math.ceil(confs.shape[0] / len_type)
